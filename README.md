@@ -1,5 +1,120 @@
 # Blockchain Based Halal Logistic System
 
+## System Flow Chart
+
+### Overall System Architecture
+```mermaid
+graph TB
+    A[User/Supplier] -->|Connect| B[MetaMask Wallet]
+    B -->|Authenticate| C[Web3 Interface]
+    C -->|Interact| D[Smart Contract on Ethereum]
+    D -->|Store Data| E[Blockchain]
+    C -->|Upload Files| F[IPFS Storage]
+    
+    subgraph "Smart Contract Functions"
+    D --> G[Container Management]
+    D --> H[Warehouse Management]
+    end
+    
+    G --> I[Define Container]
+    G --> J[Register Container]
+    H --> K[Define Warehouse]
+    H --> L[Register Warehouse]
+```
+
+### Container Workflow
+```mermaid
+flowchart TD
+    Start([Start]) --> A[User Connects Wallet]
+    A --> B{Choose Action}
+    
+    B -->|Define Container| C[Enter Container Details]
+    C --> D[Container No, Description, Halal Status]
+    D --> E[Supplier, Size]
+    E --> F[Call defineContainer Function]
+    F --> G[Store in defContainer Array]
+    
+    B -->|Register Container| H[Select Defined Container]
+    H --> I[Enter Booking Details]
+    I --> J[Start Date, End Date, Product Name]
+    J --> K[Quantity, Booked Status]
+    K --> L[Call registerContainer Function]
+    L --> M[Store in Container Array]
+    
+    B -->|View Container| N[View Container Details]
+    N --> O[Display All Containers]
+    O --> P{Filter Options}
+    P -->|Available| Q[Show Available Containers]
+    P -->|Not Available| R[Show Booked Containers]
+    P -->|All| S[Show All Containers]
+    
+    G --> End([End])
+    M --> End
+    Q --> End
+    R --> End
+    S --> End
+```
+
+### Warehouse Workflow
+```mermaid
+flowchart TD
+    Start([Start]) --> A[User Connects Wallet]
+    A --> B{Choose Action}
+    
+    B -->|Define Warehouse| C[Enter Warehouse Details]
+    C --> D[Warehouse ID, Size, Address]
+    D --> E[Area Code, Halal Status]
+    E --> F[Call defineWarehouse Function]
+    F --> G[Store in defWarehouse Array]
+    
+    B -->|Register Warehouse| H[Select Defined Warehouse]
+    H --> I[Enter Product Details]
+    I --> J[Product Name, Quantity]
+    J --> K[Warehouse Status]
+    K --> L[Call registerWarehouse Function]
+    L --> M[Store in Warehouse Array]
+    
+    B -->|View Warehouse| N[View Warehouse Details]
+    N --> O[Display All Warehouses]
+    O --> P{Filter Options}
+    P -->|Full| Q[Show Full Warehouses]
+    P -->|Not Full| R[Show Available Warehouses]
+    P -->|Destroyed| S[Show Destroyed Warehouses]
+    P -->|All| T[Show All Warehouses]
+    
+    G --> End([End])
+    M --> End
+    Q --> End
+    R --> End
+    S --> End
+    T --> End
+```
+
+### Halal Status Verification Flow
+```mermaid
+sequenceDiagram
+    participant User
+    participant WebApp
+    participant SmartContract
+    participant Blockchain
+    
+    User->>WebApp: Request to Define Container/Warehouse
+    WebApp->>User: Prompt for Halal Status
+    User->>WebApp: Submit Details with Halal Status
+    WebApp->>SmartContract: Call define Function
+    SmartContract->>Blockchain: Store Data with Halal Status
+    Blockchain-->>SmartContract: Confirmation
+    SmartContract-->>WebApp: Transaction Success
+    WebApp-->>User: Display Confirmation
+    
+    User->>WebApp: Request to View Container/Warehouse
+    WebApp->>SmartContract: Query Stored Data
+    SmartContract->>Blockchain: Retrieve Data
+    Blockchain-->>SmartContract: Return Data with Halal Status
+    SmartContract-->>WebApp: Return Results
+    WebApp-->>User: Display Details with Halal Status
+```
+
 ## Setup
 1. Download the Metamask Extension from chrome
 2. Set your wallet to Rinkeby test network
